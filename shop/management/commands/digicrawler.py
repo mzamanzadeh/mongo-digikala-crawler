@@ -19,7 +19,7 @@ class Command(BaseCommand):
             'sport-entertainment',
         ]
         for category in categories:
-            self.stdout.write(self.style.SUCCESS(category +' started...\n'))
+            self.stdout.write(self.style.SUCCESS(category +' started...'))
             for i in range(1,2):
                 crawl_category(category,i)
-            self.stdout.write(self.style.SUCCESS(category +' imported\n'))
+            self.stdout.write(self.style.SUCCESS(category +' imported'))

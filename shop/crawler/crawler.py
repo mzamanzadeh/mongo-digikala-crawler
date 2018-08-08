@@ -36,16 +36,56 @@ def crawl_category(category_name,page=1):
     html = urlopen(url).read()
 
     parsed_html = BeautifulSoup(html,'html.parser')
+
     products = parsed_html.body.find_all('div', attrs={'class':'c-product-box'})
     db = db_helper()
     for product in products:
+        product_url = "https://www.digikala.com"+product.find("div",attrs={'class': 'c-product-box__title'}).find("a").get("href")
+
         data = {}
+        data['product_url'] = product_url
         data['product_id'] = product.get("data-id")
         data['farsi_title'] = product.get("data-title-fa")
         data['en_title'] = product.get("data-title-en")
         data['price'] = price_fa2en(product.get("data-price"))
         data['image_url'] = product.find("img").get("src")
-        data['product_url'] = product.find("div",attrs={'class': 'c-product-box__title'}).find("a").get("href")
-        data['category_slug'] = category_name
-        db.insert_one('products', data)
+        data['comments'] = crawl_comments(data['product_id'])
+        # print(str(data))
+        db.insert_one('category-'+category_name, data)
 
+
+def crawl_comments(id):
+    url = "https://www.digikala.com/ajax/product/comments/"+id+"/?page=1&mode=newest"
+    # print(url)
+    html = urlopen(url).read()
+    parsed_html = BeautifulSoup(html,'html.parser')
+
+    comments = []
+    commentsSection = parsed_html.find_all('li')
+    for comment in commentsSection:
+        if comment.find('p') is not None:
+
+            comments.append({
+                'by': comment.find("div",attrs={'class': 'header'}).find("span").contents[0],
+                'content': comment.find('p').contents[0]
+            })
+
+    return comments
+
+def crawl_questions(id):
+    url = "https://www.digikala.com/ajax/product/questions/"+id+"/?page=1&mode=newest"
+    # print(url)
+    html = urlopen(url).read()
+    parsed_html = BeautifulSoup(html,'html.parser')
+
+    comments = []
+    commentsSection = parsed_html.find_all('li')
+    for comment in commentsSection:
+        if comment.find('p') is not None:
+
+            comments.append({
+                'by': comment.find("div",attrs={'class': 'header'}).find("span").contents[0],
+                'content': comment.find('p').contents[0]
+            })
+
+    return comments
