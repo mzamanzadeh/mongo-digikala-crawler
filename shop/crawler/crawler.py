@@ -7,7 +7,7 @@ from shop.mongo import db_helper
 
 def get_category_url(category_name,page=1):
     # return "http://localhost/view-source_https___www.digikala.com_search_category-electronic-devices__has_selling_stock=1&pageno=2&sortby=7.html"
-    return "https://www.digikala.com/search/"+category_name+"/?has_selling_stock=1&sortby=7&pageno="+str(page)
+    return "https://www.digikala.com/search/category-"+category_name+"/?has_selling_stock=1&sortby=7&pageno="+str(page)
 
 def price_fa2en(fa):
     mapping = {
@@ -30,11 +30,10 @@ def _multiple_replace(mapping, text):
     return re.sub(pattern, lambda m: mapping[m.group()], str(text))
 
 
-def crawl_category(category_name):
+def crawl_category(category_name,page=1):
     url = get_category_url(category_name)
-    print("reading stated")
+
     html = urlopen(url).read()
-    print("reading finished")
 
     parsed_html = BeautifulSoup(html,'html.parser')
     products = parsed_html.body.find_all('div', attrs={'class':'c-product-box'})
@@ -47,5 +46,6 @@ def crawl_category(category_name):
         data['price'] = price_fa2en(product.get("data-price"))
         data['image_url'] = product.find("img").get("src")
         data['product_url'] = product.find("div",attrs={'class': 'c-product-box__title'}).find("a").get("href")
+        data['category_slug'] = category_name
         db.insert_one('products', data)
 
