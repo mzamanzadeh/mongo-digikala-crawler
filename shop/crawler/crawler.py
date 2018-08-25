@@ -23,7 +23,7 @@ def price_fa2en(fa):
         '۹': '9',
         '.': '.',
     }
-    return _multiple_replace(mapping, fa).replace(",","")
+    return int(_multiple_replace(mapping, fa).replace(",",""))
 #from https://github.com/itmard/Persian/blob/master/persian/persian.py
 def _multiple_replace(mapping, text):
     pattern = "|".join(map(re.escape, mapping.keys()))
@@ -40,6 +40,11 @@ def crawl_category(category_name,page=1):
     products = parsed_html.body.find_all('div', attrs={'class':'c-product-box'})
     db = db_helper()
     for product in products:
+
+        if db.getDB()[category_name].find({'product_id': product.get("data-id")}).count()>0:
+            if db.getDB()['products'].find({'product_id': product.get("data-id")}).count()==0:
+                db.insert_one('products', {'category': 'category-'+category_name,'product_id': product.get("data-id")})
+            continue
         product_url = "https://www.digikala.com"+product.find("div",attrs={'class': 'c-product-box__title'}).find("a").get("href")
 
         data = {}
@@ -53,7 +58,7 @@ def crawl_category(category_name,page=1):
         data['questions'] = crawl_questions(data['product_id'])
         # print(str(data))
         db.insert_one('category-'+category_name, data)
-
+        db.insert_one('products', {'category': 'category-'+category_name,'product_id':data['product_id']})
 
 def crawl_comments(id):
     url = "https://www.digikala.com/ajax/product/comments/"+id+"/?page=1&mode=newest"

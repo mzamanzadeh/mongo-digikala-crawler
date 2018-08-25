@@ -17,8 +17,9 @@ from django.conf.urls import url
 from django.contrib import admin
 
 from shop.crawler.importer import importer
-
+import shop.view as views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^', importer ),
+    url(r'^category/(?P<category_name>.+)/$', views.category ),
+    url(r'^product/(?P<product_id>\d+)/$', views.product ),
 ]

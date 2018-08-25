@@ -13,3 +13,6 @@ class db_helper():
     def insert_one(self,collection,data):
         id = self.db[collection].insert_one(data)
         return id.inserted_id
+
+    def getDB(self):
+        return self.db
