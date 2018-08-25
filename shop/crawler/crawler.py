@@ -1,4 +1,6 @@
 from urllib.request import urlopen
+
+import time
 from bs4 import BeautifulSoup
 import re
 
@@ -46,7 +48,6 @@ def crawl_category(category_name, page=1):
     products = parsed_html.body.find_all('div', attrs={'class': 'c-product-box'})
     db = db_helper()
     db.getDB()['category-' + category_name].create_index([('farsi_title', TEXT), ('en_title', TEXT)])#{'farsi_title': "text", 'en_title': 'text'})
-    print('kir')
     for product in products:
 
         if db.getDB()[category_name].find({'product_id': product.get("data-id")}).count() > 0:
@@ -84,6 +85,7 @@ def crawl_comments(id):
     for comment in commentsSection:
         if comment.find('p') is not None:
             comments.append({
+                'id': int(time.time()*1000),
                 'by': comment.find("div", attrs={'class': 'header'}).find("span").contents[0],
                 'content': comment.find('p').contents[0]
             })

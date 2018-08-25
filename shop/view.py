@@ -49,7 +49,7 @@ def product(request, product_id):
     db = helper.getDB()
     categoryName = db.products.find_one({'product_id': product_id})
     product = db[categoryName['category']].find_one({'product_id': product_id})
-    return render(request,'product.html',{'product': product})
+    return render(request,'product.html',{'product': product,'categories': helper.getCategories()})
 
 def product_del(request , product_id):
 
@@ -68,7 +68,6 @@ def add_comment(request, product_id):
     helper = db_helper()
     db = helper.getDB()
     categoryName = db.products.find_one({'product_id': product_id})
-    product = db[categoryName['category']].find_one({'product_id': product_id})
     if request.method=="POST":
         comment = {'content':request.POST.get('comment')}
         comment['by'] = "توسط "+request.POST.get('by','ناشناس')
@@ -81,11 +80,8 @@ def remove_comment(request, product_id,comment_id):
     helper = db_helper()
     db = helper.getDB()
     categoryName = db.products.find_one({'product_id': product_id})
-    product = db[categoryName['category']].find_one({'product_id': product_id})
-    if request.method=="POST":
-        comment = {'content':request.POST.get('comment')}
-        comment['by'] = "توسط "+request.POST.get('by','ناشناس')
-        db[categoryName['category']].update_one({'product_id': product_id},{'$addToSet':{'comments': comment}})
+
+    db[categoryName['category']].update_one({'product_id': product_id},{'$pull': {'comments':{'id': int(comment_id)}}})
         # db.products.remove({'product_id': product_id})
     return redirect('/product/'+product_id)
 

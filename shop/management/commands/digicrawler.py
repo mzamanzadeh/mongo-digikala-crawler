@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from shop.crawler.crawler import crawl_category, crawl_questions
+from shop.mongo import db_helper
 
 
 class Command(BaseCommand):
@@ -20,8 +21,11 @@ class Command(BaseCommand):
             'mother-and-child',
             'sport-entertainment',
         ]
+
         for category in categories:
+
             self.stdout.write(self.style.SUCCESS(category +' started...'))
-            for i in range(1,2):
-                crawl_category(category,i)
+            crawl_category(category,3)
+            # for i in range(1,3):
+            #     crawl_category(category,i)
             self.stdout.write(self.style.SUCCESS(category +' imported'))

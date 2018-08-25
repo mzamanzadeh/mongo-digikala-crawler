@@ -16,3 +16,9 @@ class db_helper():
 
     def getDB(self):
         return self.db
+
+    def getCategories(self):
+        cats = []
+        for c in self.db.categories.find():
+            cats.append(c)
+        return cats
