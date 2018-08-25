@@ -21,5 +21,6 @@ import shop.view as views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^category/(?P<category_name>.+)/$', views.category ),
+    url(r'^product/(?P<product_id>\d+)/edit$', views.product_edit ),
     url(r'^product/(?P<product_id>\d+)/$', views.product ),
 ]

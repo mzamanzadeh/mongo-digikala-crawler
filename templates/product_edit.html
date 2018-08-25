@@ -1,0 +1,7 @@
+<form method="post">
+    <input name="farsi_title" value="{{ product.farsi_title }}"><br>
+    <input name="en_title" value="{{ product.en_title }}"><br>
+    <input name="price" value="{{ product.price }}"><br>
+    {% csrf_token %}
+    <button type="submit">save</button>
+</form>
