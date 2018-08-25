@@ -30,8 +30,7 @@ def category(request,category_name):
     db = helper.getDB()
     products = db['category-'+category_name].find(filters)
     maxPrice = db['category-'+category_name].find_one(sort = [('price',-1)])
-    categories = db.categories.find()
-    return render(request,'category.html',{'products': products,'categories': categories,'maxPrice': maxPrice['price']})
+    return render(request,'category.html',{'products': products,'categories': helper.getCategories(),'maxPrice': maxPrice['price']})
 
 def product_edit(request,product_id):
     helper = db_helper()
