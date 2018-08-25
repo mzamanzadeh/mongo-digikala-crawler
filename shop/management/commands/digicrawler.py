@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from shop.crawler.crawler import crawl_category
+from shop.crawler.crawler import crawl_category, crawl_questions
 
 
 class Command(BaseCommand):
@@ -8,6 +8,8 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        # res = crawl_questions("203451")
+
         categories = [
             'electronic-devices',
             'personal-appliance',

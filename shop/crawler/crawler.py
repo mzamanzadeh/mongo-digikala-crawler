@@ -31,7 +31,7 @@ def _multiple_replace(mapping, text):
 
 
 def crawl_category(category_name,page=1):
-    url = get_category_url(category_name)
+    url = get_category_url(category_name,page)
 
     html = urlopen(url).read()
 
@@ -50,6 +50,7 @@ def crawl_category(category_name,page=1):
         data['price'] = price_fa2en(product.get("data-price"))
         data['image_url'] = product.find("img").get("src")
         data['comments'] = crawl_comments(data['product_id'])
+        data['questions'] = crawl_questions(data['product_id'])
         # print(str(data))
         db.insert_one('category-'+category_name, data)
 
@@ -78,14 +79,22 @@ def crawl_questions(id):
     html = urlopen(url).read()
     parsed_html = BeautifulSoup(html,'html.parser')
 
-    comments = []
-    commentsSection = parsed_html.find_all('li')
-    for comment in commentsSection:
-        if comment.find('p') is not None:
+    questions = []
+    questionsSection = parsed_html.find_all('ul',attrs= {'class': 'c-faq__list'})
+    for li in questionsSection:
+        question = li.find('li',attrs = {'class': 'is-question'})
+        questionAnswers = []
+        if question is not None:
+            for s in question.find_all('p'):
+                qa = {'question': {'by': question.find('span').contents[0],'content': str(s)}, 'answers': []}
 
-            comments.append({
-                'by': comment.find("div",attrs={'class': 'header'}).find("span").contents[0],
-                'content': comment.find('p').contents[0]
-            })
-
-    return comments
+            answers = li.find_all('li',attrs = {'class': 'is-answer'})
+            for answer in answers:
+                a = None
+                if answer.get('id')!="answerFormItem":
+                    for s in answer.find_all('p'):
+                        a = s
+                    qa['answers'].append({ 'by': answer.find('span').contents[0],'content': str(a) })
+            questionAnswers.append(qa)
+        questions.append(questionAnswers)
+    return questions
