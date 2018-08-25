@@ -60,6 +60,9 @@ def crawl_category(category_name,page=1):
         db.insert_one('category-'+category_name, data)
         db.insert_one('products', {'category': 'category-'+category_name,'product_id':data['product_id']})
 
+    db.getDB()['category-'+category_name].createIndex( { 'farsi_title': "text" } )
+    # db.getDB()['category-'+category_name].createIndex( { 'en_title': "text" } )
+
 def crawl_comments(id):
     url = "https://www.digikala.com/ajax/product/comments/"+id+"/?page=1&mode=newest"
     # print(url)
