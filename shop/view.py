@@ -46,3 +46,4 @@ def product(request, product_id):
     categoryName = db.products.find_one({'product_id': product_id})
     product = db[categoryName['category']].find_one({'product_id': product_id})
     return render(request,'product.html',{'product': product})
+
