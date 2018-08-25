@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<form method="post">
+    <input name="farsi_title" value="{{ product.farsi_title }}"><br>
+    <input name="en_title" value="{{ product.en_title }}"><br>
+    <input name="price" value="{{ product.price }}"><br>
+    {% csrf_token %}
+    <button type="submit">remove</button>
+</form>

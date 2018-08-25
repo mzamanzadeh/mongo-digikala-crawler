@@ -18,9 +18,14 @@ from django.contrib import admin
 
 from shop.crawler.importer import importer
 import shop.view as views
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^category/(?P<category_name>.+)/$', views.category ),
-    url(r'^product/(?P<product_id>\d+)/edit$', views.product_edit ),
-    url(r'^product/(?P<product_id>\d+)/$', views.product ),
+    url(r'^category/(?P<category_name>.+)/$', views.category),
+    url(r'^product/(?P<product_id>\d+)/edit$', views.product_edit),
+    url(r'^product/(?P<product_id>\d+)/remove$', views.product_del),
+    url(r'^product/(?P<product_id>\d+)/comment$', views.add_comment),
+    url(r'^product/(?P<product_id>\d+)/delcom/(?P<comment_id>\d+)', views.add_comment),
+    url(r'^product/(?P<product_id>\d+)/$', views.product),
 ]
+

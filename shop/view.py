@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-
+from django.views.decorators.csrf import csrf_exempt
+import re
 from shop.mongo import db_helper
 
 
@@ -9,8 +10,11 @@ def category(request,category_name):
 
     keyword = request.GET.get("q",None)
     if keyword:
-        # filters['$or'] = [{'farsi_title':{'$search': keyword}}, {'en_title': {'$search': keyword}}]
-        filters['$text'] = {'$search': keyword}
+        reg=re.compile(".*"+keyword+".*",re.IGNORECASE)
+        # filters['$or'] = [{'farsi_title':{'$regex': "/.*"+keyword+".*/i"}}, {'en_title': {'$regex': "/.*"+keyword+".*/i"}}]
+        filters['$or'] = [{'farsi_title':{'$regex': reg}}, {'en_title': {'$regex': reg}}]
+        # filters['$text'] = {'$search': keyword}
+        # filters['farsi_title'] = {'$regex': ".*"+keyword+".*"}
 
     from_price = request.GET.get("from-price",None)
     if from_price:
@@ -46,4 +50,44 @@ def product(request, product_id):
     categoryName = db.products.find_one({'product_id': product_id})
     product = db[categoryName['category']].find_one({'product_id': product_id})
     return render(request,'product.html',{'product': product})
+
+def product_del(request , product_id):
+
+    helper = db_helper()
+    db = helper.getDB()
+    categoryName = db.products.find_one({'product_id': product_id})
+    product = db[categoryName['category']].find_one({'product_id': product_id})
+    if request.method=="POST":
+        db[categoryName['category']].remove({'product_id': product_id})
+        db.products.remove({'product_id': product_id})
+        return redirect('/category/'+categoryName['category'][9:])
+    return render(request, 'product_del.html', {'product': product})
+@csrf_exempt
+def add_comment(request, product_id):
+
+    helper = db_helper()
+    db = helper.getDB()
+    categoryName = db.products.find_one({'product_id': product_id})
+    product = db[categoryName['category']].find_one({'product_id': product_id})
+    if request.method=="POST":
+        comment = {'content':request.POST.get('comment')}
+        comment['by'] = "توسط "+request.POST.get('by','ناشناس')
+        db[categoryName['category']].update_one({'product_id': product_id},{'$addToSet':{'comments': comment}})
+        # db.products.remove({'product_id': product_id})
+    return redirect('/product/'+product_id)
+
+def remove_comment(request, product_id,comment_id):
+
+    helper = db_helper()
+    db = helper.getDB()
+    categoryName = db.products.find_one({'product_id': product_id})
+    product = db[categoryName['category']].find_one({'product_id': product_id})
+    if request.method=="POST":
+        comment = {'content':request.POST.get('comment')}
+        comment['by'] = "توسط "+request.POST.get('by','ناشناس')
+        db[categoryName['category']].update_one({'product_id': product_id},{'$addToSet':{'comments': comment}})
+        # db.products.remove({'product_id': product_id})
+    return redirect('/product/'+product_id)
+
+
 

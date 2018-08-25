@@ -54,6 +54,10 @@
 		<!-- Head Libs -->
 		<script src="/assets/vendor/modernizr/modernizr.min.js"></script>
 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 	</head>
 	<body>
 
@@ -868,11 +872,19 @@
 								</table>
 							</div>
 							<div id="product-comments" class="tab-pane active">
+                                <form method="post" action="/product/{{ product.product_id }}/comment">
+                                    <input placeholder="نام" name="by">
+                                    <textarea name="comment" placeholder="نظر..."></textarea>
+                                    <button type="submit">ارسال</button>
+                                </form><hr>
                                 <ul>
                                     {%  for comment in product.comments %}
                                         <li>
                                             <b>{{ comment.by }}</b>
                                             <p>{{ comment.content }}</p>
+                                            <a href="/product/{{ product.product_id }}/delcom/{{ comment.comment_id }}">
+                                            <i class="fa fa-trash"></i>
+                                            </a>
                                             <hr>
                                         </li>
                                     {% endfor %}
