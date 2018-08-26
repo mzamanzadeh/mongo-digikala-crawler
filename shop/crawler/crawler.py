@@ -53,11 +53,11 @@ def crawl_category(category_name, page=1):
 
     for product in products:
 
-        if db.getDB()[category_name].find({'product_id': product.get("data-id")}).count() > 0:
-            if db.getDB()['products'].find({'product_id': product.get("data-id")}).count() == 0:
-                db.insert_one('products',
-                              {'category': 'category-' + category_name, 'product_id': product.get("data-id")})
-            continue
+        # if db.getDB()[category_name].find({'product_id': product.get("data-id")}).count() > 0:
+        #     if db.getDB()['products'].find({'product_id': product.get("data-id")}).count() == 0:
+        #         db.insert_one('products',
+        #                       {'category': 'category-' + category_name, 'product_id': product.get("data-id")})
+        #     continue
         product_url = "https://www.digikala.com" + product.find("div", attrs={'class': 'c-product-box__title'}).find(
             "a").get("href")
 
