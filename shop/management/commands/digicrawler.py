@@ -25,7 +25,7 @@ class Command(BaseCommand):
         for category in categories:
 
             self.stdout.write(self.style.SUCCESS(category +' started...'))
-            crawl_category(category,3)
-            # for i in range(1,3):
-            #     crawl_category(category,i)
+            # crawl_category(category,3)
+            for i in range(1,3):
+                crawl_category(category,i)
             self.stdout.write(self.style.SUCCESS(category +' imported'))

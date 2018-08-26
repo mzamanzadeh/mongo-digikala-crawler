@@ -4,7 +4,7 @@ import time
 from bs4 import BeautifulSoup
 import re
 
-from pymongo import TEXT
+from pymongo import TEXT, ASCENDING
 
 from shop.mongo import db_helper
 
@@ -47,7 +47,8 @@ def crawl_category(category_name, page=1):
 
     products = parsed_html.body.find_all('div', attrs={'class': 'c-product-box'})
     db = db_helper()
-    db.getDB()['category-' + category_name].create_index([('farsi_title', TEXT), ('en_title', TEXT)])#{'farsi_title': "text", 'en_title': 'text'})
+    db.getDB()['category-' + category_name].create_index([('farsi_title', TEXT), ('en_title', TEXT),('price',ASCENDING),('product_id',ASCENDING)])#{'farsi_title': "text", 'en_title': 'text'})
+
     for product in products:
 
         if db.getDB()[category_name].find({'product_id': product.get("data-id")}).count() > 0:
@@ -71,7 +72,6 @@ def crawl_category(category_name, page=1):
         db.insert_one('category-' + category_name, data)
         db.insert_one('products', {'category': 'category-' + category_name, 'product_id': data['product_id']})
 
-    # db.getDB()['category-'+category_name].createIndex( { 'en_title': "text" } )
 
 
 def crawl_comments(id):
