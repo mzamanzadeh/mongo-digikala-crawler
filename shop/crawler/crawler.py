@@ -47,7 +47,9 @@ def crawl_category(category_name, page=1):
 
     products = parsed_html.body.find_all('div', attrs={'class': 'c-product-box'})
     db = db_helper()
-    db.getDB()['category-' + category_name].create_index([('farsi_title', TEXT), ('en_title', TEXT),('price',ASCENDING),('product_id',ASCENDING)])#{'farsi_title': "text", 'en_title': 'text'})
+    db.getDB()['category-' + category_name].create_index([('farsi_title', TEXT), ('en_title', TEXT)])#{'farsi_title': "text", 'en_title': 'text'})
+    db.getDB()['category-' + category_name].create_index([('price',ASCENDING)])#{'farsi_title': "text", 'en_title': 'text'})
+    db.getDB()['category-' + category_name].create_index([('product_id',ASCENDING)])#, unique = True)#{'farsi_title': "text", 'en_title': 'text'})
 
     for product in products:
 
