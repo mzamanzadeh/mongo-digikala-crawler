@@ -1,3 +1,5 @@
+from time import time
+
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 import re
@@ -68,7 +70,7 @@ def add_comment(request, product_id):
     db = helper.getDB()
     categoryName = db.products.find_one({'product_id': product_id})
     if request.method=="POST":
-        comment = {'content':request.POST.get('comment')}
+        comment = {'id': int(time()),'content':request.POST.get('comment')}
         comment['by'] = "توسط "+request.POST.get('by','ناشناس')
         db[categoryName['category']].update_one({'product_id': product_id},{'$addToSet':{'comments': comment}})
         # db.products.remove({'product_id': product_id})
